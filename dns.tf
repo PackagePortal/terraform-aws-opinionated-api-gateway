@@ -44,6 +44,7 @@ resource "aws_api_gateway_domain_name" "domain" {
   count           = local.has_custom_domain ? 1 : 0
   certificate_arn = aws_acm_certificate_validation.certificate[0].certificate_arn
   domain_name     = trim(local.domain_name, ".")
+  security_policy = "TLS_1_2"
 }
 
 resource "aws_route53_record" "a_record" {
