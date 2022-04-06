@@ -85,3 +85,9 @@ variable "api_description" {
   description = "Description for API Gateway"
   default     = "API Gateway managed by terraform"
 }
+
+variable "manual_redeploy" {
+  type        = bool
+  description = "Whether you want manual control over redeploys"
+  default = false
+}

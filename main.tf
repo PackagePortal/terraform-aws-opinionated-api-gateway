@@ -45,7 +45,7 @@ resource "aws_api_gateway_deployment" "api_gateway_deployment" {
   description = "${local.name_base} deployment"
   rest_api_id = aws_api_gateway_rest_api.rest_api.id
   # Redeploys on change of any of the hashes returned by sub modules
-  triggers = {
+  triggers = var.manual_redeploy ? {} : {
     redeployment = sha1(join(",", [
       jsonencode([join(",", concat(module.s3_integrations.*.redeployment_trigger_json))]),
       jsonencode([join(",", concat(module.sns_integrations.*.redeployment_trigger_json))]),
