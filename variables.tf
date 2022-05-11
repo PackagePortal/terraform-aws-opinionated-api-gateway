@@ -14,6 +14,12 @@ variable "domain" {
   default     = ""
 }
 
+variable "sub_domain" {
+  type        = string
+  description = "Use this if your hosted zone is the whole domain"
+  default     = ""       
+}
+
 variable "cache_cluster_size" {
   type        = string
   default     = "0.5"

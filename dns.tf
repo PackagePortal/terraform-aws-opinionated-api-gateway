@@ -12,7 +12,7 @@ data "aws_route53_zone" "zone" {
 
 resource "aws_acm_certificate" "certificate" {
   count             = local.has_custom_domain ? 1 : 0
-  domain_name       = trim(local.domain_name, ".")
+  domain_name       = var.sub_domain == "" ? trim(local.domain_name, ".") : "${trim(var.sub_domain, ".")}.${trim(local.domain_name, ".")}"
   validation_method = "DNS"
 
   lifecycle {
