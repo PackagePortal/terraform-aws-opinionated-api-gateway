@@ -4,6 +4,10 @@
 # is actually deployed internally by the API Gateway
 ####################################################################################
 
+locals {
+  certificate_domain_name = var.sub_domain == "" ? trim(local.domain_name, ".") : "${trim(var.sub_domain, ".")}.${trim(local.domain_name, ".")}"
+}
+
 data "aws_route53_zone" "zone" {
   count        = local.has_custom_domain ? 1 : 0
   name         = local.domain_name
@@ -12,7 +16,7 @@ data "aws_route53_zone" "zone" {
 
 resource "aws_acm_certificate" "certificate" {
   count             = local.has_custom_domain ? 1 : 0
-  domain_name       = var.sub_domain == "" ? trim(local.domain_name, ".") : "${trim(var.sub_domain, ".")}.${trim(local.domain_name, ".")}"
+  domain_name       = local.certificate_domain_name
   validation_method = "DNS"
 
   lifecycle {
@@ -43,7 +47,7 @@ resource "aws_acm_certificate_validation" "certificate" {
 resource "aws_api_gateway_domain_name" "domain" {
   count           = local.has_custom_domain ? 1 : 0
   certificate_arn = aws_acm_certificate_validation.certificate[0].certificate_arn
-  domain_name     = trim(local.domain_name, ".")
+  domain_name     = local.certificate_domain_name
   security_policy = "TLS_1_2"
 }
 
