@@ -1,6 +1,6 @@
 module "s3_integrations" {
   count  = length(local.s3_mappings)
-  source = "github.com/PackagePortal/terraform-aws-gateway-s3-path?ref=v0.0.1"
+  source = "github.com/PackagePortal/terraform-aws-gateway-s3-path?ref=v0.0.2"
 
   rest_api_id      = aws_api_gateway_rest_api.rest_api.id
   s3_bucket_arn    = local.s3_mappings[count.index].arn
