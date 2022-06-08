@@ -18,6 +18,10 @@ resource "aws_iam_role" "api_gateway_role" {
   EOF
 }
 
+#################################
+# Api Gateway Logging           #
+#################################
+
 data "aws_iam_policy_document" "log_publishing" {
   statement {
     actions = [
@@ -47,6 +51,10 @@ resource "aws_iam_role_policy_attachment" "log_publishing_attachment" {
   policy_arn = aws_iam_policy.log_publishing.arn
 }
 
+#################################
+# Api Gateway KMS Use           #
+#################################
+
 data "aws_iam_policy_document" "kms" {
   statement {
     actions   = ["kms:*"]
@@ -67,6 +75,88 @@ resource "aws_iam_role_policy_attachment" "kms" {
   policy_arn = aws_iam_policy.kms.arn
 }
 
+#################################
+# Api Gateway S3 Get            #
+#################################
+
+data "aws_iam_policy_document" "s3" {
+  count = length(local.s3_mappings) > 0 ? 1 : 0
+  statement {
+    actions = [
+      "s3:ListBucket",
+      "s3:GetObject"
+    ]
+
+    resources = concat(local.s3_mappings.*.arn, [for s in local.s3_mappings: "${s.arn}/*"])
+  }
+}
+
+resource "aws_iam_policy" "s3_access" {
+  count      = length(local.s3_mappings) > 0 ? 1 : 0
+  name        = "${local.name_base}-s3-access-gateway"
+  path        = "/"
+  description = "Allow s3 access"
+
+  policy = data.aws_iam_policy_document.s3[0].json
+}
+
+
+resource "aws_iam_role_policy_attachment" "s3_attach" {
+  count      = length(local.s3_mappings) > 0 ? 1 : 0
+  role       = aws_iam_role.api_gateway_role.name
+  policy_arn = aws_iam_policy.s3_access[0].arn
+}
+
+#################################
+# Api Gateway SNS Publish       #
+#################################
+
+data "aws_iam_policy_document" "sns" {
+  count      = length(local.sns_mappings) > 0 ? 1 : 0
+  statement {
+    actions = [
+      "sns:Publish"
+    ]
+
+    resources = local.sns_mappings.*.arn
+  }
+}
+
+resource "aws_iam_policy" "sns_publishing" {
+  count      = length(local.sns_mappings) > 0 ? 1 : 0
+  name        = "${local.name_base}-sns-policy-gateway"
+  path        = "/"
+  description = "Allow publishing to SNS"
+
+  policy = data.aws_iam_policy_document.sns[0].json
+}
+
+resource "aws_iam_role_policy_attachment" "sns_publishing_attachment" {
+  count      = length(local.sns_mappings) > 0 ? 1 : 0
+  role       = aws_iam_role.api_gateway_role.name
+  policy_arn = aws_iam_policy.sns_publishing[0].arn
+}
+
+#################################
+# Api Gateway Lambda Invoke     #
+#################################
+
+resource "aws_lambda_permission" "lambda_permission" {
+  count         = length(local.distinct_lambdas)
+  statement_id  = "${local.name_base}-lambda-invoke-${count.index}"
+  action        = "lambda:InvokeFunction"
+  function_name = local.distinct_lambdas[count.index]
+  principal     = "apigateway.amazonaws.com"
+
+  # The /*/*/* part allows invocation from any stage, method and resource path
+  # within API Gateway REST API.
+  source_arn = "${aws_api_gateway_rest_api.rest_api.execution_arn}/*/*/*"
+}
+
+#################################
+# Custom Auth Lambda Invoke     #
+#################################
+
 data "aws_iam_policy_document" "lambda_invoke" {
   count = local.needs_lambda ? 1 : 0
   statement {
@@ -74,7 +164,7 @@ data "aws_iam_policy_document" "lambda_invoke" {
       "lambda:InvokeFunction"
     ]
 
-    resources = [aws_lambda_function.custom_authorizer[0].arn]
+    resources = aws_lambda_function.custom_authorizer[0].arn
   }
 }
 
@@ -94,8 +184,9 @@ resource "aws_iam_role_policy_attachment" "lambda_invoke" {
 }
 
 #################################
-# Lambda IAM                    #
+# Custom Auth Lambda IAM        #
 #################################
+
 resource "aws_iam_role" "lambda" {
   count = local.needs_lambda ? 1 : 0
   name  = "iam_for_${local.name_base}_gateway_auth_lambda"

@@ -9,20 +9,22 @@ locals {
     endpoint : ""
     arn : ""
     method : "POST"
-    load_balancer_link_arn : "",
     cache : false
     image_hosting : false
-    key: ""
+    key: "",
+    name: ""
   }
   resource_count    = length(local.mappings)
   mappings          = [for mapping in var.mappings : merge(local.default_mapping, mapping)] # Sets defaults if not present
   needs_lambda      = contains(local.mappings.*.use_custom_auth, true)
   has_custom_domain = var.domain != ""
+  distinct_lambdas  = distinct(local.lambda_mappings.*.name)
 
   # Filtered lists of mappings by submodule they create
   s3_mappings     = [for item in local.mappings : item if lower(item.type) == "s3"]
   proxy_mappings  = [for item in local.mappings : item if lower(item.type) == "proxy"]
   sns_mappings    = [for item in local.mappings : item if lower(item.type) == "sns"]
+  lambda_mappings = [for item in local.mappings: item if lower(item.type) == "lambda"]
   caching_enabled = contains(local.mappings.*.cache, true)
 }
 
@@ -38,7 +40,8 @@ resource "aws_api_gateway_stage" "stage" {
   xray_tracing_enabled = true
 
   cache_cluster_enabled = local.caching_enabled
-  cache_cluster_size    = var.cache_cluster_size
+  # TODO: broken until we upgrade everything to v4 if this is set.
+  # cache_cluster_size    = var.cache_cluster_size
 }
 
 resource "aws_api_gateway_deployment" "api_gateway_deployment" {
@@ -49,7 +52,8 @@ resource "aws_api_gateway_deployment" "api_gateway_deployment" {
     redeployment = sha1(join(",", [
       jsonencode([join(",", concat(module.s3_integrations.*.redeployment_trigger_json))]),
       jsonencode([join(",", concat(module.sns_integrations.*.redeployment_trigger_json))]),
-      jsonencode([join(",", concat(module.proxy_integrations.*.redeployment_trigger_json))])
+      jsonencode([join(",", concat(module.proxy_integrations.*.redeployment_trigger_json))]),
+      jsonencode([join(",", concat(module.lambda_integrations.*.redeployment_trigger_json))])
     ]))
   }
 

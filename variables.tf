@@ -36,16 +36,17 @@ variable "mappings" {
   default = [
     {
       path : "foo"                # Required
+      arn: "" # ARN for resources, must be invoke arn for lambdas
       use_custom_auth : false     # Optional, defaults to false
       use_api_key : false         # Optional, defaults to false
       use_vpc_link : false        # Optional does this need to go a VPC?
-      load_balancer_link_arn : "" # Required if use_vpc_link is true, expected to be api_gateway_vpc_link
       method : "POST"             # Optional, defaults to POST
-      # One of endpoint or topic_arn are required, endpoint takes precedence if
-      # both are specified
-      endpoint : ""
-      topic_arn : "" # Lets a message body get posted to SNS via AWS integration
-      proxy : false  # If true will make the path greedy and all requests will get forwarded down it
+      endpoint : "" # Endpoint only required for proxy integrations
+      # arn also required for lambda
+      name: "" # Name of lambda function
+      image_hosting : false # Set to true for image serving from s3
+      key: "" # Set to have s3 serve a single key instead of folder
+      cache : false # Turn on to enable request caching (not recommend most of the time)
     }
   ]
 }

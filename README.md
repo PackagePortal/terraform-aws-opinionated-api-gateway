@@ -5,6 +5,7 @@ This is an opinionated terraform module that creates an API Gateway that can do 
 2. Integrate with SNS
 3. VPC Link
 4. Integrate with S3 to serve content
+5. Proxy Lambda functions
 
 ## Limitations
 
@@ -115,6 +116,16 @@ module "example" {
       path: "{proxy+}",
       method: "GET",
       arn: aws_s3_bucket.resources_bucket.arn
-  }]
+  },
+  # Lambda proxy
+  {
+      type: "lambda"
+      path: "lambda/{proxy+}",
+      method: "ANY",
+      arn: aws_lambda.my_lambda.invoke_arn,
+      name: aws_lambda.my_lambda.name,
+      use_api_key: false
+  }
+  ]
 }
 ```
