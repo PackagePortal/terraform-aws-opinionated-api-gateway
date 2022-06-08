@@ -40,7 +40,8 @@ resource "aws_api_gateway_stage" "stage" {
   xray_tracing_enabled = true
 
   cache_cluster_enabled = local.caching_enabled
-  cache_cluster_size    = var.cache_cluster_size
+  # TODO: broken until we upgrade everything to v4 if this is set.
+  # cache_cluster_size    = var.cache_cluster_size
 }
 
 resource "aws_api_gateway_deployment" "api_gateway_deployment" {
