@@ -55,3 +55,13 @@ variable "cache" {
   default     = false
   description = "Whether to use custom api key"
 }
+
+variable "execution_arn" {
+  type = string
+  description = "Rest API Execution ARN"
+}
+
+variable "lambda_name" {
+  type = string
+  description = "Lambda name"
+}

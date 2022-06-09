@@ -74,7 +74,9 @@ module "lambda_integrations" {
   root_resource_id       = aws_api_gateway_rest_api.rest_api.root_resource_id
   lamdba_invoke_arn      = local.lambda_mappings[count.index].arn
   cache                  = local.lambda_mappings[count.index].cache
+  lambda_name            = local.lambda_mappings[count.index].name
   stage_name             = local.name_base
+  execution_arn          = aws_api_gateway_rest_api.rest_api.execution_arn
 
   # Optional auth vars
   custom_authorizer_id = local.lambda_mappings[count.index].use_custom_auth == true ? aws_api_gateway_authorizer.authorizer[0].id : ""
