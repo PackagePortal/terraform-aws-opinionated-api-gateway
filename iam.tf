@@ -138,22 +138,6 @@ resource "aws_iam_role_policy_attachment" "sns_publishing_attachment" {
 }
 
 #################################
-# Api Gateway Lambda Invoke     #
-#################################
-
-resource "aws_lambda_permission" "lambda_permission" {
-  count         = length(local.distinct_lambdas)
-  statement_id  = "${local.name_base}-lambda-invoke-${count.index}"
-  action        = "lambda:InvokeFunction"
-  function_name = local.distinct_lambdas[count.index]
-  principal     = "apigateway.amazonaws.com"
-
-  # The /*/*/* part allows invocation from any stage, method and resource path
-  # within API Gateway REST API.
-  source_arn = "${aws_api_gateway_rest_api.rest_api.execution_arn}/*/*/*"
-}
-
-#################################
 # Custom Auth Lambda Invoke     #
 #################################
 
