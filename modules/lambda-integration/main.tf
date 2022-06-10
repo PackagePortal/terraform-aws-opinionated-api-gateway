@@ -36,7 +36,6 @@ resource "aws_api_gateway_integration" "integration" {
 
   integration_http_method = "POST"
   passthrough_behavior    = "WHEN_NO_TEMPLATES"
-  credentials             = var.iam_role_arn
   type                    = "AWS_PROXY"
   uri                     = var.lamdba_invoke_arn
 }
