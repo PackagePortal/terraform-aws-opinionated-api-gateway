@@ -44,7 +44,7 @@ module "sns_integrations" {
 
 module "proxy_integrations" {
   count  = length(local.proxy_mappings)
-  source = "github.com/PackagePortal/terraform-aws-gateway-proxy-path?ref=v0.0.1"
+  source = "github.com/PackagePortal/terraform-aws-gateway-proxy-path?ref=root-proxy-support"
 
   rest_api_id            = aws_api_gateway_rest_api.rest_api.id
   load_balancer_link_arn = local.proxy_mappings[count.index].arn
