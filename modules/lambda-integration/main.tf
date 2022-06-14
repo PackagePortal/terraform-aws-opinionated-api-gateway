@@ -1,7 +1,7 @@
 locals {
   name_base   = "${var.env}-${var.app_name}"
   custom_auth = var.custom_authorizer_id != ""
-  path_parts  = split("/", var.path)
+  path_parts  = length(split("/", var.path)) == 1 ? tolist(["/"]) : split("/", var.path)
   is_sub_path = length(local.path_parts) > 1
 
   root_resource_id = aws_api_gateway_resource.proxy.id
