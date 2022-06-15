@@ -1,12 +1,10 @@
 locals {
-  name_base           = "${var.env}-${var.app_name}"
-  custom_auth         = var.custom_authorizer_id != ""
-  path_parts          = split("/", var.path)
-  is_sub_path         = length(local.path_parts) > 1
-  final_path_part     = element(local.path_parts, length(local.path_parts) - 1)
-  has_proxy_path_part = local.final_path_part == "{proxy+}"
+  name_base   = "${var.env}-${var.app_name}"
+  custom_auth = var.custom_authorizer_id != ""
+  path_parts  = split("/", var.path)
+  is_sub_path = length(local.path_parts) > 1
 
-  root_resource_id = local.has_proxy_path_part ? aws_api_gateway_resource.proxy[0].id : var.root_resource_id
+  root_resource_id = aws_api_gateway_resource.proxy.id
 }
 
 resource "aws_api_gateway_resource" "path_root" {
@@ -17,7 +15,6 @@ resource "aws_api_gateway_resource" "path_root" {
 }
 
 resource "aws_api_gateway_resource" "proxy" {
-  count       = local.has_proxy_path_part ? 1 : 0
   rest_api_id = var.rest_api_id
   parent_id   = local.is_sub_path ? aws_api_gateway_resource.path_root[0].id : var.root_resource_id
   path_part   = "{proxy+}"
