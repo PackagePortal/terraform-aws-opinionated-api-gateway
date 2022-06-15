@@ -2,7 +2,7 @@
 # Api Gateway Lambda Invoke     #
 #################################
 locals {
-  statement_id_suffix = local.is_sub_path ? local.path_parts[0] : "root-path"
+  statement_id_suffix = local.is_sub_path ? local.path_parts[0] : (local.no_parts_after_split ? "root-path" : "proxy-root-path")
   statement_id        = "${local.name_base}-lambda-invoke-${local.statement_id_suffix}"
 }
 
