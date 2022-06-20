@@ -126,6 +126,15 @@ module "example" {
       name: aws_lambda.my_lambda.name,
       use_api_key: false
   }
+  # Lambda proxy as root resource
+  {
+      type: "lambda"
+      path: "/",
+      method: "ANY",
+      arn: aws_lambda.my_lambda.invoke_arn,
+      name: aws_lambda.my_lambda.name,
+      use_api_key: false
+  }
   ]
 }
 ```
