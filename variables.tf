@@ -5,7 +5,7 @@ variable "name" {
 
 variable "env" {
   type        = string
-  description = "Terraform workspace usually - or dev/prod"
+  description = "Environment prefix added to names"
 }
 
 variable "domain" {

@@ -1,6 +1,6 @@
 module "s3_integrations" {
   count  = length(local.s3_mappings)
-  source = "github.com/PackagePortal/terraform-aws-gateway-s3-path?ref=v0.1.0"
+  source = "./modules/s3-path"
 
   rest_api_id      = aws_api_gateway_rest_api.rest_api.id
   s3_bucket_arn    = local.s3_mappings[count.index].arn
@@ -24,7 +24,7 @@ module "s3_integrations" {
 
 module "sns_integrations" {
   count  = length(local.sns_mappings)
-  source = "github.com/PackagePortal/terraform-aws-gateway-sns-path?ref=v0.1.0"
+  source = "./modules/sns-path"
 
   rest_api_id      = aws_api_gateway_rest_api.rest_api.id
   sns_topic_arn    = local.sns_mappings[count.index].arn
@@ -44,7 +44,7 @@ module "sns_integrations" {
 
 module "proxy_integrations" {
   count  = length(local.proxy_mappings)
-  source = "github.com/PackagePortal/terraform-aws-gateway-proxy-path?ref=v0.0.1"
+  source = "./modules/proxy"
 
   rest_api_id            = aws_api_gateway_rest_api.rest_api.id
   load_balancer_link_arn = local.proxy_mappings[count.index].arn
