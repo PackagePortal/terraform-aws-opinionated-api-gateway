@@ -59,7 +59,7 @@ resource "aws_api_gateway_integration_response" "integration_response" {
 }
 
 resource "aws_api_gateway_method_response" "ok" {
-  depends_on = [aws_api_gateway_method.method]
+  depends_on  = [aws_api_gateway_method.method]
   rest_api_id = var.rest_api_id
   resource_id = aws_api_gateway_resource.path_root.id
   http_method = aws_api_gateway_method.method.http_method

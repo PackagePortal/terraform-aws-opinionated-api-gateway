@@ -17,7 +17,7 @@ variable "domain" {
 variable "sub_domain" {
   type        = string
   description = "Use this if your hosted zone is the whole domain"
-  default     = ""       
+  default     = ""
 }
 
 variable "cache_cluster_size" {
@@ -35,18 +35,18 @@ variable "mappings" {
   description = "Mapping objects that define paths"
   default = [
     {
-      path : "foo"                # Required
-      arn: "" # ARN for resources, must be invoke arn for lambdas
-      use_custom_auth : false     # Optional, defaults to false
-      use_api_key : false         # Optional, defaults to false
-      use_vpc_link : false        # Optional does this need to go a VPC?
-      method : "POST"             # Optional, defaults to POST
-      endpoint : "" # Endpoint only required for proxy integrations
+      path : "foo"            # Required
+      arn : ""                # ARN for resources, must be invoke arn for lambdas
+      use_custom_auth : false # Optional, defaults to false
+      use_api_key : false     # Optional, defaults to false
+      use_vpc_link : false    # Optional does this need to go a VPC?
+      method : "POST"         # Optional, defaults to POST
+      endpoint : ""           # Endpoint only required for proxy integrations
       # arn also required for lambda
-      name: "" # Name of lambda function
+      name : ""             # Name of lambda function
       image_hosting : false # Set to true for image serving from s3
-      key: "" # Set to have s3 serve a single key instead of folder
-      cache : false # Turn on to enable request caching (not recommend most of the time)
+      key : ""              # Set to have s3 serve a single key instead of folder
+      cache : false         # Turn on to enable request caching (not recommend most of the time)
     }
   ]
 }
@@ -96,5 +96,5 @@ variable "api_description" {
 variable "manual_redeploy" {
   type        = bool
   description = "Whether you want manual control over redeploys"
-  default = false
+  default     = false
 }

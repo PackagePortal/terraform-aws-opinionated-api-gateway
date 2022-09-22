@@ -48,7 +48,7 @@ resource "aws_api_gateway_integration" "integration" {
 
   # Included because of this issue: https://github.com/hashicorp/terraform/issues/10501
   integration_http_method = var.http_method
-  passthrough_behavior = "WHEN_NO_MATCH"
+  passthrough_behavior    = "WHEN_NO_MATCH"
 
   type = "AWS"
 
@@ -58,7 +58,7 @@ resource "aws_api_gateway_integration" "integration" {
 
   request_parameters = local.is_proxy ? {
     "integration.request.path.proxy" = "method.request.path.proxy"
-  } : { }
+  } : {}
 
   content_handling = var.image_host ? "CONVERT_TO_BINARY" : null
 }

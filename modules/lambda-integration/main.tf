@@ -4,7 +4,7 @@ locals {
   path_parts  = split("/", var.path)
   is_sub_path = length(local.path_parts) > 1 && !local.is_root
 
-  is_root = var.path == "/"
+  is_root          = var.path == "/"
   root_resource_id = local.is_root ? var.root_resource_id : aws_api_gateway_resource.proxy[0].id
 }
 

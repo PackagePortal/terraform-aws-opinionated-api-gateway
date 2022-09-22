@@ -57,11 +57,11 @@ variable "cache" {
 }
 
 variable "execution_arn" {
-  type = string
+  type        = string
   description = "Rest API Execution ARN"
 }
 
 variable "lambda_name" {
-  type = string
+  type        = string
   description = "Lambda name"
 }
