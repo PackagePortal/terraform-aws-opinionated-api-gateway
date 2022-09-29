@@ -45,8 +45,15 @@ variable "use_api_key" {
   description = "Whether to use custom api key"
 }
 
-variable "lamdba_invoke_arn" {
+variable "load_balancer_link_arn" {
   type        = string
+  default     = ""
+  description = "Optional arn to an ALB that is linked behind this proxy"
+}
+
+variable "endpoint" {
+  type        = string
+  default     = ""
   description = "Endpoint to proxy to if not a VPC link"
 }
 
@@ -54,14 +61,4 @@ variable "cache" {
   type        = bool
   default     = false
   description = "Whether to use custom api key"
-}
-
-variable "execution_arn" {
-  type        = string
-  description = "Rest API Execution ARN"
-}
-
-variable "lambda_name" {
-  type        = string
-  description = "Lambda name"
 }

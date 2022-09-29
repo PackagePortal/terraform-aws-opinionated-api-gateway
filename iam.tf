@@ -87,12 +87,12 @@ data "aws_iam_policy_document" "s3" {
       "s3:GetObject"
     ]
 
-    resources = concat(local.s3_mappings.*.arn, [for s in local.s3_mappings: "${s.arn}/*"])
+    resources = concat(local.s3_mappings.*.arn, [for s in local.s3_mappings : "${s.arn}/*"])
   }
 }
 
 resource "aws_iam_policy" "s3_access" {
-  count      = length(local.s3_mappings) > 0 ? 1 : 0
+  count       = length(local.s3_mappings) > 0 ? 1 : 0
   name        = "${local.name_base}-s3-access-gateway"
   path        = "/"
   description = "Allow s3 access"
@@ -112,7 +112,7 @@ resource "aws_iam_role_policy_attachment" "s3_attach" {
 #################################
 
 data "aws_iam_policy_document" "sns" {
-  count      = length(local.sns_mappings) > 0 ? 1 : 0
+  count = length(local.sns_mappings) > 0 ? 1 : 0
   statement {
     actions = [
       "sns:Publish"
@@ -123,7 +123,7 @@ data "aws_iam_policy_document" "sns" {
 }
 
 resource "aws_iam_policy" "sns_publishing" {
-  count      = length(local.sns_mappings) > 0 ? 1 : 0
+  count       = length(local.sns_mappings) > 0 ? 1 : 0
   name        = "${local.name_base}-sns-policy-gateway"
   path        = "/"
   description = "Allow publishing to SNS"

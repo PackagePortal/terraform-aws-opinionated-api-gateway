@@ -3,9 +3,9 @@ variable "rest_api_id" {
   description = "Rest API this path is attached to"
 }
 
-variable "path" {
+variable "s3_bucket_arn" {
   type        = string
-  description = "Path from root of gateway"
+  description = "Arn of s3 bucket to attach to"
 }
 
 variable "stage_name" {
@@ -13,9 +13,24 @@ variable "stage_name" {
   description = "AWS API gateway stage name"
 }
 
+variable "path" {
+  type        = string
+  description = "Path from root of gateway"
+}
+
+variable "region" {
+  type        = string
+  description = "AWS region this is deployed in"
+}
+
 variable "iam_role_arn" {
   type        = string
   description = "Gateway IAM role"
+}
+
+variable "iam_role_name" {
+  type        = string
+  description = "IAM role name"
 }
 
 variable "env" {
@@ -45,9 +60,10 @@ variable "use_api_key" {
   description = "Whether to use custom api key"
 }
 
-variable "lamdba_invoke_arn" {
+variable "http_method" {
   type        = string
-  description = "Endpoint to proxy to if not a VPC link"
+  default     = "GET"
+  description = "HTTP Method for integration with S3"
 }
 
 variable "cache" {
@@ -56,12 +72,14 @@ variable "cache" {
   description = "Whether to use custom api key"
 }
 
-variable "execution_arn" {
-  type        = string
-  description = "Rest API Execution ARN"
+variable "image_host" {
+  type        = bool
+  description = "Whether content should be returned as binary for hosting images"
+  default     = false
 }
 
-variable "lambda_name" {
+variable "key" {
   type        = string
-  description = "Lambda name"
+  description = "Default S3 key to use"
+  default     = ""
 }

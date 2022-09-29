@@ -24,9 +24,11 @@ output "invoke_url" {
 }
 
 output "root_url" {
-  value = "https://${var.domain}"
+  description = "Root domain of api gateway with https:// prefixed"
+  value       = "https://${var.domain}"
 }
 
 output "stage_arn" {
-  value = aws_api_gateway_stage.stage.arn
+  description = "Stage arn"
+  value       = aws_api_gateway_stage.stage.arn
 }

@@ -3,14 +3,14 @@ variable "rest_api_id" {
   description = "Rest API this path is attached to"
 }
 
+variable "sns_topic_arn" {
+  type        = string
+  description = "Arn of sns bucket to attach to"
+}
+
 variable "path" {
   type        = string
   description = "Path from root of gateway"
-}
-
-variable "stage_name" {
-  type        = string
-  description = "AWS API gateway stage name"
 }
 
 variable "iam_role_arn" {
@@ -18,9 +18,19 @@ variable "iam_role_arn" {
   description = "Gateway IAM role"
 }
 
+variable "iam_role_name" {
+  type        = string
+  description = "IAM role name"
+}
+
 variable "env" {
   type        = string
   description = "Environment this is deployed in (e.g. dev or prod)"
+}
+
+variable "region" {
+  type        = string
+  description = "AWS Region gateway is deployed in"
 }
 
 variable "app_name" {
@@ -45,23 +55,8 @@ variable "use_api_key" {
   description = "Whether to use custom api key"
 }
 
-variable "lamdba_invoke_arn" {
+variable "http_method" {
   type        = string
-  description = "Endpoint to proxy to if not a VPC link"
-}
-
-variable "cache" {
-  type        = bool
-  default     = false
-  description = "Whether to use custom api key"
-}
-
-variable "execution_arn" {
-  type        = string
-  description = "Rest API Execution ARN"
-}
-
-variable "lambda_name" {
-  type        = string
-  description = "Lambda name"
+  default     = "POST"
+  description = "HTTP method for integration"
 }

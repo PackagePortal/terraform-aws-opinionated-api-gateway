@@ -11,8 +11,8 @@ locals {
     method : "POST"
     cache : false
     image_hosting : false
-    key: "",
-    name: ""
+    key : "",
+    name : ""
   }
   resource_count    = length(local.mappings)
   mappings          = [for mapping in var.mappings : merge(local.default_mapping, mapping)] # Sets defaults if not present
@@ -24,7 +24,7 @@ locals {
   s3_mappings     = [for item in local.mappings : item if lower(item.type) == "s3"]
   proxy_mappings  = [for item in local.mappings : item if lower(item.type) == "proxy"]
   sns_mappings    = [for item in local.mappings : item if lower(item.type) == "sns"]
-  lambda_mappings = [for item in local.mappings: item if lower(item.type) == "lambda"]
+  lambda_mappings = [for item in local.mappings : item if lower(item.type) == "lambda"]
   caching_enabled = contains(local.mappings.*.cache, true)
 }
 

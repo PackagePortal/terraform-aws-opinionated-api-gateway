@@ -2,10 +2,10 @@ locals {
   name_base   = "${var.env}-${var.app_name}"
   custom_auth = var.custom_authorizer_id != ""
   path_parts  = split("/", var.path)
-  is_sub_path = length(local.path_parts) > 1 && !local.is_root
+  is_vpc_link = var.load_balancer_link_arn != ""
+  is_sub_path = length(local.path_parts) > 1
 
-  is_root          = var.path == "/"
-  root_resource_id = local.is_root ? var.root_resource_id : aws_api_gateway_resource.proxy[0].id
+  root_resource_id = aws_api_gateway_resource.proxy.id
 }
 
 resource "aws_api_gateway_resource" "path_root" {
@@ -16,7 +16,6 @@ resource "aws_api_gateway_resource" "path_root" {
 }
 
 resource "aws_api_gateway_resource" "proxy" {
-  count       = local.is_root ? 0 : 1
   rest_api_id = var.rest_api_id
   parent_id   = local.is_sub_path ? aws_api_gateway_resource.path_root[0].id : var.root_resource_id
   path_part   = "{proxy+}"
@@ -29,6 +28,10 @@ resource "aws_api_gateway_method" "method" {
   authorization    = local.custom_auth == true ? "CUSTOM" : "NONE"
   authorizer_id    = local.custom_auth == true ? var.custom_authorizer_id : ""
   api_key_required = local.custom_auth != true && var.use_api_key == true
+
+  request_parameters = {
+    "method.request.path.proxy" = true
+  }
 }
 
 resource "aws_api_gateway_integration" "integration" {
@@ -36,10 +39,18 @@ resource "aws_api_gateway_integration" "integration" {
   resource_id = local.root_resource_id
   http_method = aws_api_gateway_method.method.http_method
 
-  integration_http_method = "POST"
+  integration_http_method = "ANY"
   passthrough_behavior    = "WHEN_NO_TEMPLATES"
-  type                    = "AWS_PROXY"
-  uri                     = var.lamdba_invoke_arn
+  credentials             = var.iam_role_arn
+  type                    = "HTTP_PROXY"
+
+  request_parameters = {
+    "integration.request.path.proxy" = "method.request.path.proxy"
+  }
+
+  uri             = "${var.endpoint}/{proxy}"
+  connection_type = local.is_vpc_link == true ? "VPC_LINK" : "INTERNET"
+  connection_id   = local.is_vpc_link == true ? var.load_balancer_link_arn : ""
 }
 
 resource "aws_api_gateway_integration_response" "integration_response" {
