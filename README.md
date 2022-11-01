@@ -39,7 +39,14 @@ will go to the root proxy, but `/parent/some-other-path` will go to `/parent/{pr
    the domain or subdomain. For example: `NS my-cool-app. <collection of assigned aws name servers>`
 3. Terraform and the AWS provider installed, as well as an active AWS account.
 
-Deploying this may incur costs in AWS depending on your usage of the free tiers in AWS.
+Deploying this may incur costs in AWS depending on your usage of the free tiers in AWS. Note you will also need to add 
+a gateway account for logging (see below).
+
+```hcl-terraform
+resource "aws_api_gateway_account" "gateway_account" {
+  cloudwatch_role_arn = module.my-opinionated-gateway.gateway_iam_role.arn
+}
+```
 
 ### Annontated Example
 

@@ -148,7 +148,7 @@ data "aws_iam_policy_document" "lambda_invoke" {
       "lambda:InvokeFunction"
     ]
 
-    resources = aws_lambda_function.custom_authorizer[0].arn
+    resources = [aws_lambda_function.custom_authorizer[0].arn]
   }
 }
 
