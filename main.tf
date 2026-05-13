@@ -1,19 +1,21 @@
 locals {
   name_base   = "${var.env}-${var.name}"
   domain_name = "${var.domain}."
-  api_gateway_security_policy    = "SecurityPolicy_TLS13_1_2_2021_06"
-  api_gateway_endpoint_mode      = "STRICT"
-  rest_api_openapi = {
-    openapi = "3.0.1"
-    info = {
-      title       = "${local.name_base}-rest-api"
-      version     = "1.0"
-      description = var.api_description
+  rest_api_openapi = merge(
+    {
+      openapi = "3.0.1"
+      info = {
+        title       = "${local.name_base}-rest-api"
+        version     = "1.0"
+        description = var.api_description
+      }
+      paths                                 = {}
+      "x-amazon-apigateway-security-policy" = var.api_gateway_security_policy
+    },
+    var.api_gateway_endpoint_access_mode == null ? {} : {
+      "x-amazon-apigateway-endpoint-access-mode" = var.api_gateway_endpoint_access_mode
     }
-    paths = {}
-    "x-amazon-apigateway-security-policy"     = local.api_gateway_security_policy
-    "x-amazon-apigateway-endpoint-access-mode" = local.api_gateway_endpoint_mode
-  }
+  )
 
   # Used to set default values
   default_mapping = {
