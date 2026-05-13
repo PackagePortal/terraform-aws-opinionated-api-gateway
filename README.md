@@ -9,6 +9,13 @@ This is an opinionated Terraform module that creates an API Gateway V1 that can 
 
 See Limitations for tradeoffs that make this module easy to configure, and reference for a full list of created resources.
 
+## Requirements
+
+| Name | Version |
+|------|---------|
+| Terraform | >= 1.0 |
+| AWS Provider | >= 6.0.0 |
+
 ## Limitations
 
 There are some limitations traded for ease of use detailed here:
@@ -21,6 +28,8 @@ There are some limitations traded for ease of use detailed here:
 6. SNS integrations cannot be at the root level (they are POST only - module and API gateway will not support)
 7. Right now we only have one stage deployed (you can add more outside of the module). Using more than one can be useful
 for having staging environments.
+
+**Security defaults (v6 upgrade):** The custom domain enforces `SecurityPolicy_TLS13_1_2_2021_06` (TLS 1.3 preferred, TLS 1.2 minimum) and `endpoint_access_mode = STRICT`. The REST API is created with an OpenAPI body and `put_rest_api_mode = "merge"`, which means routes added by sub-modules are merged rather than overwriting the base spec.
 
 Note that proxies are smart and will ignore siblings. Given these two paths:
 ```
@@ -207,7 +216,7 @@ module "example" {
 | [aws_iam_policy_document.s3](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.sns](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_route53_zone.zone](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route53_zone) | data source |
-| [aws_s3_bucket_object.source](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/s3_bucket_object) | data source |
+| [aws_s3_object.source](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/s3_object) | data source |
 
 ## Inputs
 

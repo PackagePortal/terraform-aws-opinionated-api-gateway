@@ -1,4 +1,4 @@
-data "aws_s3_bucket_object" "source" {
+data "aws_s3_object" "source" {
   count  = local.needs_lambda ? 1 : 0
   bucket = var.auth_lambda_s3_bucket
   key    = "${var.auth_lambda_s3_key}.sha256"
@@ -14,7 +14,7 @@ resource "aws_lambda_function" "custom_authorizer" {
   runtime       = var.auth_lambda_runtime
 
   # Changes in this hash uploaded on build trigger updates
-  source_code_hash = chomp(data.aws_s3_bucket_object.source[0].body)
+  source_code_hash = chomp(data.aws_s3_object.source[0].body)
 
   environment {
     variables = merge({

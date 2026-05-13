@@ -98,3 +98,15 @@ variable "manual_redeploy" {
   description = "Whether you want manual control over redeploys"
   default     = false
 }
+
+variable "api_gateway_security_policy" {
+  type        = string
+  description = "Security policy for the API Gateway REST API and custom domain. Use 'TLS_1_2' (legacy) or a 'SecurityPolicy_*' value for enhanced policies. Enhanced policies also require setting api_gateway_endpoint_access_mode."
+  default     = "TLS_1_2"
+}
+
+variable "api_gateway_endpoint_access_mode" {
+  type        = string
+  description = "Endpoint access mode for the API Gateway REST API and custom domain. Required when api_gateway_security_policy is an enhanced policy ('SecurityPolicy_*'). Must be null/unset when using a legacy policy. Valid values: 'BASIC', 'STRICT'."
+  default     = null
+}

@@ -20,7 +20,7 @@ output "api_key" {
 
 output "invoke_url" {
   description = "URL to invoke rest API from"
-  value       = "${aws_api_gateway_deployment.api_gateway_deployment.invoke_url}${local.name_base}"
+  value       = "https://${aws_api_gateway_rest_api.rest_api.id}.execute-api.${var.region}.amazonaws.com/${aws_api_gateway_stage.stage.stage_name}"
 }
 
 output "root_url" {

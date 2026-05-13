@@ -45,10 +45,11 @@ resource "aws_acm_certificate_validation" "certificate" {
 }
 
 resource "aws_api_gateway_domain_name" "domain" {
-  count           = local.has_custom_domain ? 1 : 0
-  certificate_arn = aws_acm_certificate_validation.certificate[0].certificate_arn
-  domain_name     = local.certificate_domain_name
-  security_policy = "TLS_1_2"
+  count                = local.has_custom_domain ? 1 : 0
+  certificate_arn      = aws_acm_certificate_validation.certificate[0].certificate_arn
+  domain_name          = local.certificate_domain_name
+  security_policy      = var.api_gateway_security_policy
+  endpoint_access_mode = var.api_gateway_endpoint_access_mode
 }
 
 resource "aws_route53_record" "a_record" {
