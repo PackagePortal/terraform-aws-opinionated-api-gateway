@@ -49,6 +49,15 @@ variable "mappings" {
       cache : false         # Turn on to enable request caching (not recommend most of the time)
     }
   ]
+
+  validation {
+    condition = alltrue([
+      for t in distinct([for m in var.mappings : lower(m.type)]) :
+      length([for m in var.mappings : trim(m.path, "/") if lower(m.type) == t]) ==
+      length(distinct([for m in var.mappings : trim(m.path, "/") if lower(m.type) == t]))
+    ])
+    error_message = "Duplicate path (after trimming leading/trailing \"/\") found within the same mapping type. Paths must be unique per type since they become for_each map keys."
+  }
 }
 
 variable "auth_lambda_s3_bucket" {
