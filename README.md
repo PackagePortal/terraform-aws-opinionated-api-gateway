@@ -9,11 +9,13 @@ This is an opinionated Terraform module that creates an API Gateway V1 that can 
 
 See Limitations for tradeoffs that make this module easy to configure, and reference for a full list of created resources.
 
+Upgrading from an older major version? See [UPGRADING.md](UPGRADING.md) for breaking-change migration steps.
+
 ## Requirements
 
 | Name | Version |
 |------|---------|
-| Terraform | >= 1.0 |
+| Terraform | >= 1.1 |
 | AWS Provider | >= 6.0.0 |
 
 ## Limitations

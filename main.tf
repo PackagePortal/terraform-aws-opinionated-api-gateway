@@ -41,6 +41,13 @@ locals {
   sns_mappings    = [for item in local.mappings : item if lower(item.type) == "sns"]
   lambda_mappings = [for item in local.mappings : item if lower(item.type) == "lambda"]
   caching_enabled = contains(local.mappings.*.cache, true)
+
+  # Keyed by path so adding/removing/reordering entries in var.mappings doesn't
+  # shift other paths' state addresses (see modules/s3-path's own clean_path trim)
+  s3_mappings_map     = { for m in local.s3_mappings : trim(m.path, "/") => m }
+  proxy_mappings_map  = { for m in local.proxy_mappings : trim(m.path, "/") => m }
+  sns_mappings_map    = { for m in local.sns_mappings : trim(m.path, "/") => m }
+  lambda_mappings_map = { for m in local.lambda_mappings : trim(m.path, "/") => m }
 }
 
 resource "aws_api_gateway_rest_api" "rest_api" {
@@ -69,10 +76,10 @@ resource "aws_api_gateway_deployment" "api_gateway_deployment" {
   triggers = var.manual_redeploy ? {} : {
     redeployment = sha1(join(",", [
       jsonencode(local.rest_api_openapi),
-      jsonencode([join(",", concat(module.s3_integrations.*.redeployment_trigger_json))]),
-      jsonencode([join(",", concat(module.sns_integrations.*.redeployment_trigger_json))]),
-      jsonencode([join(",", concat(module.proxy_integrations.*.redeployment_trigger_json))]),
-      jsonencode([join(",", concat(module.lambda_integrations.*.redeployment_trigger_json))])
+      jsonencode([join(",", values(module.s3_integrations)[*].redeployment_trigger_json)]),
+      jsonencode([join(",", values(module.sns_integrations)[*].redeployment_trigger_json)]),
+      jsonencode([join(",", values(module.proxy_integrations)[*].redeployment_trigger_json)]),
+      jsonencode([join(",", values(module.lambda_integrations)[*].redeployment_trigger_json)])
     ]))
   }
 
